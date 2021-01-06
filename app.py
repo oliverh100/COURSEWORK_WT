@@ -20,7 +20,7 @@ cache = Cache(app)
 login = LoginManager(app)
 login.login_view = 'login'
 
-from models import Teacher, Activity, Room, TeacherActivityLink, User
+from models import Teacher, Activity, Room, TeacherActivityLink
 from forms import *
 
 
