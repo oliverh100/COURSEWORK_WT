@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table>
+    {% for activity in activities_table %}
+        <tr>
+        {% for item in activity %}
+            <td>{{ item }}</td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+{% if add_activity_form and show_options['add'] %}
+<form method="post" novalidate>
+        {{ add_activity_form.hidden_tag() }}
+        {{ add_activity_form.a_name }}<br>
+{{ add_activity_form.r_name }}<br>
+{{ add_activity_form.week }}
+{{ add_activity_form.day }}
+{{ add_activity_form.time }}<br>
+{{ add_activity_form.max_attendees }}<br>
+{{ add_activity_form.food_supplied }}<br>
+
+        <button type="button" id="addNewField">Add Teacher</button>
+        {{ add_activity_form.teacher_list }}
+        {{ add_activity_form.submit_add }}
+    </form>
+    {% endif %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var addCount = 1;
+            $("#addNewField").click(function() {
+                var newInput = $("#teacher_list");
+                newInput.append(GetDynamicTextBox(addCount));
+                $("#teacher_list").append(newInput);
+                addCount += 1;
+            });
+        });
+
+        function GetDynamicTextBox(addCount) {
+            return '<div>' +
+            '<input name = "teacher' + addCount + '"type="text" value = "" />&nbsp;' +
+            '<input type="button" value="Remove" class="remove" />' + '</div>' ;
+        }
+
+        $(function () {
+            $("#addNewField").click(function() {
+                $("#subDirList").append(GetDynamicTextBox(addCount));
+
+            });
+
+            $("body").on("click", ".remove", function () {
+                $(this).closest("div").remove();
+                addCount -= 1;
+            });
+        });
+    </script>
+    <form action="" method="post" novalidate>
+<input type="submit" value="Add" name="add">
+<input type="submit" value="Edit" name="edit">
+<input type="submit" value="Delete" name="delete">
+</form>
+{% endblock %}

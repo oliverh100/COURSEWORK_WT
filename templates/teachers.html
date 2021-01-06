@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table>
+    {% for teacher in teacher_table %}
+        <tr>
+        {% for item in teacher %}
+            <td>{{ item }}</td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+{% if add_teacher_form and show_options['add'] %}
+<form action="" method="post" novalidate>
+    {{ add_teacher_form.hidden_tag() }}
+    {{ add_teacher_form.f_name }}<br>
+    {{ add_teacher_form.s_name }}<br>
+    {{ add_teacher_form.initials }}<br>
+    {{ add_teacher_form.email }}<br>
+    {{ add_teacher_form.title }}<br>
+    {{ add_teacher_form.submit_add }}
+{% endif %}
+</form>
+{% if edit_teacher_form and show_options['edit'] %}
+<form action="" method="post" novalidate>
+    {{ edit_teacher_form.hidden_tag() }}
+    {{ edit_teacher_form.f_name }}<br>
+    {{ edit_teacher_form.s_name }}<br>
+    {{ edit_teacher_form.initials }}<br>
+    {{ edit_teacher_form.email }}<br>
+    {{ edit_teacher_form.title }}<br>
+    {{ edit_teacher_form.submit_edit }}
+</form>
+{% endif %}
+{% if find_edit_id_form and show_options['edit_id'] %}
+<form action="" method="post" novalidate>
+    {{ find_edit_id_form.hidden_tag() }}
+    {{ find_edit_id_form.s_name }}<br>
+    {{ find_edit_id_form.submit_edit_id }}
+</form>
+{% endif %}
+{% if delete_teacher_form and show_options['delete'] %}
+<form action="" method="post" novalidate>
+    {{ delete_teacher_form.hidden_tag() }}
+    {{ delete_teacher_form.s_name }}<br>
+    {{ delete_teacher_form.submit_delete_id }}
+</form>
+{% endif %}
+<form action="" method="post" novalidate>
+<input type="submit" value="Add" name="add">
+<input type="submit" value="Edit" name="edit">
+<input type="submit" value="Delete" name="delete">
+</form>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table>
+    {% for room in room_table %}
+        <tr>
+        {% for item in room %}
+            <td>{{ item }}</td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+{% if add_room_form and show_options['add'] %}
+<form action="" method="post" novalidate>
+    {{ add_room_form.hidden_tag() }}
+    {{ add_room_form.r_name }}<br>
+    {{ add_room_form.building }}<br>
+    {{ add_room_form.submit_add }}
+</form>
+{% endif %}
+{% if edit_room_form and show_options['edit'] %}
+<form action="" method="post" novalidate>
+    {{ edit_room_form.hidden_tag() }}
+    {{ edit_room_form.r_name }}<br>
+    {{ edit_room_form.building }}<br>
+    {{ edit_room_form.submit_edit }}
+</form>
+{% endif %}
+{% if find_edit_id_form and show_options['edit_id'] %}
+<form action="" method="post" novalidate>
+    {{ find_edit_id_form.hidden_tag() }}
+    {{ find_edit_id_form.r_name }}<br>
+    {{ find_edit_id_form.submit_edit_id }}
+</form>
+{% endif %}
+{% if delete_room_form and show_options['delete'] %}
+<form action="" method="post" novalidate>
+    {{ delete_room_form.hidden_tag() }}
+    {{ delete_room_form.r_name }}<br>
+    {{ delete_room_form.submit_delete_id }}
+</form>
+{% endif %}
+<form action="" method="post" novalidate>
+<input type="submit" value="Add" name="add">
+<input type="submit" value="Edit" name="edit">
+<input type="submit" value="Delete" name="delete">
+</form>
+{% endblock %}
