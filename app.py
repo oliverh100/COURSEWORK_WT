@@ -86,7 +86,7 @@ def teachers():
         teacher_to_edit.edit(edit_teacher_form)
         return redirect('teachers')
 
-    if delete_teacher_form.submit_delete_id and delete_teacher_form.validate_on_submit():
+    if delete_teacher_form.submit_delete_id.data and delete_teacher_form.validate_on_submit():
         teacher_id = find_id_teacher(delete_teacher_form.s_name.data)
         Teacher.query.filter(Teacher.id == teacher_id).delete()
         db.session.commit()
@@ -148,7 +148,7 @@ def rooms():
         room_to_edit.edit(edit_room_form)
         return redirect('rooms')
 
-    if delete_room_form.submit_delete_id and delete_room_form.validate_on_submit():
+    if delete_room_form.submit_delete_id.data and delete_room_form.validate_on_submit():
         room_id = find_id_room(delete_room_form.r_name.data)
         Room.query.filter(Room.id == room_id).delete()
         db.session.commit()

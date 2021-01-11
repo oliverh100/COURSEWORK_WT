@@ -19,7 +19,7 @@ class AddTeacherForm(FlaskForm):
     f_name = StringField('First name', validators=[DataRequired()], render_kw={'placeholder': 'First Name'})
     s_name = StringField('Surname', validators=[DataRequired()], render_kw={'placeholder': 'Surname'})
     initials = StringField('Initials', validators=[DataRequired()], render_kw={'placeholder': 'Initials'})
-    email = StringField('Email', validators=[DataRequired(), Email()], render_kw={'placeholder': 'Email'})
+    email = StringField('Email', validators=[DataRequired()], render_kw={'placeholder': 'Email'})
     title = StringField('Title', validators=[DataRequired()], render_kw={'placeholder': 'Title'})
     submit_add = SubmitField('Submit')
 
