@@ -164,11 +164,16 @@ def rooms():
 def activities():
 
     add_activity_form = AddActivityForm()
+    find_times_form = FindTimesForm()
+    find_rooms_form = FindRoomsForm()
+    activities_table = [activity.iterable_datetime() for activity in Activity.query.all()]
     show_options = {
         'edit_id': False,
         'edit': False,
         'add': False,
-        'delete': False
+        'delete': False,
+        'find_times': False,
+        'find_rooms': False
     }
 
     data = request.form
@@ -183,6 +188,14 @@ def activities():
 
     if 'delete' in data:
         show_options['delete'] = True
+        redirect('activities')
+
+    if 'find_times' in data:
+        show_options['find_times'] = True
+        redirect('activities')
+
+    if 'find_rooms' in data:
+        show_options['find_rooms'] = True
         redirect('activities')
 
     if add_activity_form.submit_add.data and add_activity_form.validate_on_submit():
@@ -204,9 +217,43 @@ def activities():
 
         return redirect('activities')
 
-    activities_table = [activity.iterable_datetime() for activity in Activity.query.all()]
+    if find_times_form.submit_find_times.data and find_times_form.validate_on_submit():
+        r_id = find_id_room(find_times_form.room.data)
 
-    return render_template('activities.html', activities_table=activities_table, add_activity_form=add_activity_form, show_options=show_options)
+        weeks = ['A', 'B']
+        days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+        times = ['Before school', 'Lunch', 'After school']
+
+        all_times = {week: {day: {time: None for time in times} for day in days} for week in weeks}
+
+        activities_in_room = Activity.query.filter(Activity.r_id == r_id).all()
+        for activity in activities_in_room:
+            all_times[activity.week][activity.day][activity.time] = activity
+
+        available_times = [f'Week {week} {day}, {time}' for week in weeks for day in days for time in times if not all_times[week][day][time]]
+        return render_template('activities.html', activities_table=activities_table, add_activity_form=add_activity_form, show_options=show_options,
+                               available_times=available_times, find_times_form=find_times_form, available_times_room=Room.query.get(r_id).r_name)
+
+    if find_rooms_form.submit_find_rooms.data and find_rooms_form.validate_on_submit():
+        week = find_rooms_form.week.data
+        day = find_rooms_form.day.data
+        time = find_rooms_form.time.data
+
+        all_rooms = {room: None for room in Room.query.all()}
+        activities_at_times = Activity.query.filter(Activity.week == week, Activity.day == day, Activity.time == time).all()
+
+        for activity in activities_at_times:
+            all_rooms[Room.query.get(activity.r_id)] = activity
+
+        available_rooms = [room.r_name for room in all_rooms if not all_rooms[room]]
+
+        datetime = f'Week {week} {day}, {time}'
+
+        return render_template('activities.html', activities_table=activities_table, add_activity_form=add_activity_form, show_options=show_options,
+                               available_rooms=available_rooms, find_times_form=find_times_form, available_rooms_datetime=datetime)
+
+    return render_template('activities.html', activities_table=activities_table, add_activity_form=add_activity_form, show_options=show_options,
+                           find_times_form=find_times_form, find_rooms_form=find_rooms_form)
 
 
 @app.route('/login', methods=['GET', 'POST'])

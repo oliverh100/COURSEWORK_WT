@@ -128,3 +128,15 @@ class SortActivitiesForm(FlaskForm):
     submit_sort_activities = SubmitField('Submit')
 
 
+class FindTimesForm(FlaskForm):
+    room = StringField('Room', validators=[DataRequired()], render_kw={'placeholder': 'Room Name'})
+    submit_find_times = SubmitField('Find available times in this room')
+
+
+class FindRoomsForm(FlaskForm):
+    week = SelectField('Date time', choices=[('A', 'A'), ('B', 'B')], validators=[DataRequired()])
+    day = SelectField('Date time', choices=[('Monday', 'Monday'), ('Tuesday', 'Tuesday'), ('Wednesday', 'Wednesday'), ('Thursday', 'Thursday'),
+                                            ('Friday', 'Friday')], validators=[DataRequired()])
+    time = SelectField('Date time', choices=[('Before school', 'Before school'), ('Lunch', 'Lunch'), ('After school', 'After school')],
+                       validators=[DataRequired()])
+    submit_find_rooms = SubmitField('Find available rooms at this time')

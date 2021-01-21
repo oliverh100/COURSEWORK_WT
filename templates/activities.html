@@ -10,14 +10,44 @@
         </tr>
     {% endfor %}
 </table>
+    {% if available_times %}
+        <p>The available times in {{ available_times_room }} are</p>
+        {% for available_time in available_times %}
+            {{ available_time }}<br>
+        {% endfor %}
+    {% endif %}
+    {% if available_rooms %}
+        <p>The available rooms at {{ available_rooms_datetime }} are</p>
+        {% for available_room in available_rooms %}
+            {{ available_room }}<br>
+        {% endfor %}
+    {% endif %}
+    {% if find_times_form and show_options['find_times'] %}
+        <form method="post" novalidate>
+        {{ find_times_form.hidden_tag() }}
+        {{ find_times_form.room }} <br>
+        {{ find_times_form.submit_find_times }}
+        </form>
+    {% endif %}
+    {% if find_rooms_form and show_options['find_rooms'] %}
+        <form method="post" novalidate>
+        {{ find_rooms_form.hidden_tag() }}
+        {{ find_rooms_form.week }}
+            {{ find_rooms_form.day }}
+            {{ find_rooms_form.time }}<br>
+        {{ find_rooms_form.submit_find_rooms }}
+        </form>
+    {% endif %}
 {% if add_activity_form and show_options['add'] %}
 <form method="post" novalidate>
         {{ add_activity_form.hidden_tag() }}
         {{ add_activity_form.a_name }}<br>
-{{ add_activity_form.r_name }}<br>
+{{ add_activity_form.r_name }}
+    <input type="submit" value="Find all available rooms" name="find_rooms"><br><br>
 {{ add_activity_form.week }}
 {{ add_activity_form.day }}
-{{ add_activity_form.time }}<br>
+{{ add_activity_form.time }}
+    <input type="submit" value="Find all available times" name="find_times"><br>
 {{ add_activity_form.max_attendees }}<br>
 {{ add_activity_form.food_supplied }}<br>
 
