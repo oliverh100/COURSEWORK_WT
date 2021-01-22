@@ -76,6 +76,7 @@ def teachers():
         teacher_id = find_id_teacher(find_edit_id_form.s_name.data)
         teacher_to_edit = Teacher.query.get(teacher_id)
         edit_teacher_form.process(obj=teacher_to_edit)
+        print(teacher_id)
         cache.set('teacher_to_edit_id', teacher_id)
         show_options['edit'] = True
         return render_template('teachers.html', teacher_table=teacher_table, edit_teacher_form=edit_teacher_form, teacher_to_edit=teacher_to_edit,
@@ -84,12 +85,20 @@ def teachers():
     if edit_teacher_form.submit_edit.data and edit_teacher_form.validate_on_submit():
         teacher_to_edit = Teacher.query.get(cache.get('teacher_to_edit_id'))
         teacher_to_edit.edit(edit_teacher_form)
+        print(edit_teacher_form.title.data)
         return redirect('teachers')
 
     if delete_teacher_form.submit_delete_id.data and delete_teacher_form.validate_on_submit():
-        teacher_id = find_id_teacher(delete_teacher_form.s_name.data)
-        Teacher.query.filter(Teacher.id == teacher_id).delete()
-        db.session.commit()
+        teacher_to_delete = Teacher.query.filter(Teacher.s_name == delete_teacher_form.s_name.data.title()).first()
+        if not teacher_to_delete:
+            flash('Couldn\'t find teacher')
+        else:
+            activities_with_teachers = TeacherActivityLink.query.filter(TeacherActivityLink.t_id == teacher_to_delete.id).first()
+            if activities_with_teachers:
+                flash('Cannot delete teacher. Teacher is part of an activity')
+                return redirect('teachers')
+            Teacher.query.filter(Teacher.s_name == delete_teacher_form.s_name.data.title()).delete()
+            db.session.commit()
         return redirect('teachers')
 
     teacher_table = [teacher.iterable() for teacher in Teacher.query.all()]
@@ -149,9 +158,16 @@ def rooms():
         return redirect('rooms')
 
     if delete_room_form.submit_delete_id.data and delete_room_form.validate_on_submit():
-        room_id = find_id_room(delete_room_form.r_name.data)
-        Room.query.filter(Room.id == room_id).delete()
-        db.session.commit()
+        room_to_delete = Room.query.filter(Room.r_name == delete_room_form.r_name.data.upper()).first()
+        if not room_to_delete:
+            flash('Couldn\'t find room')
+        else:
+            activities_in_room = Activity.query.filter(Activity.r_id == room_to_delete.id).first()
+            if activities_in_room:
+                flash('Cannot delete room. It is being used for an activity')
+                return redirect('rooms')
+            Room.query.filter(Room.r_name == delete_room_form.r_name.data.upper()).delete()
+            db.session.commit()
         return redirect('rooms')
 
     room_table = [room.iterable() for room in Room.query.all()]
@@ -166,7 +182,31 @@ def activities():
     add_activity_form = AddActivityForm()
     find_times_form = FindTimesForm()
     find_rooms_form = FindRoomsForm()
+    delete_activity_form = DeleteActivityForm()
     activities_table = [activity.iterable_datetime() for activity in Activity.query.all()]
+
+    def datetime_sorter(combined_datetime):
+        weeks = ['A', 'B']
+        days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+        times = ['Before school', 'Lunch', 'After school']
+
+        combined_datetime = combined_datetime.split()
+        week = combined_datetime[1]
+        day = combined_datetime[2][:-1]
+        time = combined_datetime[3]
+
+        try:
+            time += ' ' + combined_datetime[4]
+        except IndexError:
+            pass
+
+        week = weeks.index(week)
+        day = days.index(day)
+        time = times.index(time)
+
+        return (week * 7 + day) * 3 + time
+
+    activities_table = sorted(activities_table, key=lambda x: datetime_sorter(x[2]))
     show_options = {
         'edit_id': False,
         'edit': False,
@@ -231,6 +271,7 @@ def activities():
             all_times[activity.week][activity.day][activity.time] = activity
 
         available_times = [f'Week {week} {day}, {time}' for week in weeks for day in days for time in times if not all_times[week][day][time]]
+
         return render_template('activities.html', activities_table=activities_table, add_activity_form=add_activity_form, show_options=show_options,
                                available_times=available_times, find_times_form=find_times_form, available_times_room=Room.query.get(r_id).r_name)
 
@@ -252,8 +293,18 @@ def activities():
         return render_template('activities.html', activities_table=activities_table, add_activity_form=add_activity_form, show_options=show_options,
                                available_rooms=available_rooms, find_times_form=find_times_form, available_rooms_datetime=datetime)
 
+    if delete_activity_form.submit_delete_id.data and delete_activity_form.validate_on_submit():
+        activity_to_delete = Activity.query.filter(Activity.a_name == delete_activity_form.a_name.data.title()).first()
+        if not activity_to_delete:
+            flash('Couldn\'t find activity')
+        else:
+            TeacherActivityLink.query.filter(TeacherActivityLink.a_id == activity_to_delete.id).delete()
+            Activity.query.filter(Activity.a_name == delete_activity_form.a_name.data.title()).delete()
+            db.session.commit()
+        return redirect('activities')
+
     return render_template('activities.html', activities_table=activities_table, add_activity_form=add_activity_form, show_options=show_options,
-                           find_times_form=find_times_form, find_rooms_form=find_rooms_form)
+                           find_times_form=find_times_form, find_rooms_form=find_rooms_form, delete_activity_form=delete_activity_form)
 
 
 @app.route('/login', methods=['GET', 'POST'])

@@ -140,3 +140,8 @@ class FindRoomsForm(FlaskForm):
     time = SelectField('Date time', choices=[('Before school', 'Before school'), ('Lunch', 'Lunch'), ('After school', 'After school')],
                        validators=[DataRequired()])
     submit_find_rooms = SubmitField('Find available rooms at this time')
+
+
+class DeleteActivityForm(FlaskForm):
+    a_name = StringField('Activity', validators=[DataRequired()], render_kw={'placeholder': 'Activity to delete'})
+    submit_delete_id = SubmitField('Submit')

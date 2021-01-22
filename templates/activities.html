@@ -38,6 +38,13 @@
         {{ find_rooms_form.submit_find_rooms }}
         </form>
     {% endif %}
+    {% if delete_activity_form and show_options['delete'] %}
+<form action="" method="post" novalidate>
+    {{ delete_activity_form.hidden_tag() }}
+    {{ delete_activity_form.a_name }}<br>
+    {{ delete_activity_form.submit_delete_id }}
+</form>
+{% endif %}
 {% if add_activity_form and show_options['add'] %}
 <form method="post" novalidate>
         {{ add_activity_form.hidden_tag() }}

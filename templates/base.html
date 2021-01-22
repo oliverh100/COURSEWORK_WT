@@ -22,14 +22,13 @@
         </div>
         <hr>
         {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul>
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
+{% if messages %}
+<div class="alert alert_box">
+  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+  {{ messages[0] }}
+</div>
+  {% endif %}
+{% endwith %}
         {% block content %}{% endblock %}
     </body>
 </html>
