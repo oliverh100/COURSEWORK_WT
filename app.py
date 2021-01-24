@@ -348,11 +348,11 @@ def register():
 
 @app.route('/sort', methods=['GET', 'POST'])
 @login_required
-def sort():
+def search():
 
-    sort_teachers_form = SortTeachersForm()
-    sort_rooms_form = SortRoomsForm()
-    sort_activities_form = SortActivitiesForm()
+    search_teachers_form = SearchTeachersForm()
+    search_rooms_form = SearchRoomsForm()
+    search_activities_form = SearchActivitiesForm()
     show_options = {
         'teachers': False,
         'rooms': False,
@@ -374,37 +374,37 @@ def sort():
         show_options['activities'] = True
         redirect('sort')
 
-    if sort_teachers_form.submit_sort_teachers.data and sort_teachers_form.validate_on_submit():
-        if sort_teachers_form.activity.data:
-            a_id = find_id_activity(sort_teachers_form.activity.data)
+    if search_teachers_form.submit_search_teachers.data and search_teachers_form.validate_on_submit():
+        if search_teachers_form.activity.data:
+            a_id = find_id_activity(search_teachers_form.activity.data)
             teacher_list = db.session.query(Teacher).filter(Teacher.activities.any(TeacherActivityLink.a_id == a_id))
             table = [t.iterable() for t in teacher_list]
-        redirect('sort')
+        redirect('search')
 
-    if sort_rooms_form.submit_sort_rooms.data and sort_rooms_form.validate_on_submit():
-        if sort_rooms_form.activity.data:
-            a_id = find_id_activity(sort_rooms_form.activity.data)
+    if search_rooms_form.submit_search_rooms.data and search_rooms_form.validate_on_submit():
+        if search_rooms_form.activity.data:
+            a_id = find_id_activity(search_rooms_form.activity.data)
             room_list = Room.query.filter(Room.activities.any(Activity.id == a_id))
             table = [r.iterable() for r in room_list]
-        redirect('sort')
+        redirect('search')
 
-    if sort_activities_form.submit_sort_activities.data and sort_activities_form.validate_on_submit():
+    if search_activities_form.submit_search_activities.data and search_activities_form.validate_on_submit():
         activity_list_1 = []
         activity_list_2 = []
-        if sort_activities_form.teacher.data:
-            t_id = find_id_teacher(sort_activities_form.teacher.data)
+        if search_activities_form.teacher.data:
+            t_id = find_id_teacher(search_activities_form.teacher.data)
             activity_list_1 = db.session.query(Activity).filter(Activity.teachers.any(TeacherActivityLink.t_id == t_id))
 
-        if sort_activities_form.room.data:
-            r_id = find_id_room(sort_activities_form.room.data)
+        if search_activities_form.room.data:
+            r_id = find_id_room(search_activities_form.room.data)
             activity_list_2 = Activity.query.filter(Activity.r_id == r_id)
 
         activity_list = intersection(activity_list_1, activity_list_2)
         table = [a.iterable() for a in activity_list]
-        redirect('sort')
+        redirect('search')
 
-    return render_template('sort.html', show_options=show_options, sort_teachers_form=sort_teachers_form, sort_rooms_form=sort_rooms_form,
-                           sort_activities_form=sort_activities_form, table=table)
+    return render_template('search.html', show_options=show_options, search_teachers_form=search_teachers_form, search_rooms_form=search_rooms_form,
+                           search_activities_form=search_activities_form, table=table)
 
 
 def find_id_teacher(name):

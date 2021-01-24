@@ -2,6 +2,7 @@
   <dictionary name="Oliver">
     <words>
       <w>fname</w>
+      <w>highgate</w>
       <w>sname</w>
       <w>sqlalchemy</w>
     </words>

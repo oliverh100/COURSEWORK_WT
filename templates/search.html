@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form action="" method="post" novalidate>
+<!--<input type="submit" value="Teachers" name="teachers">
+<input type="submit" value="Rooms" name="rooms">-->
+<input type="submit" value="Activities" name="activities">
+</form>
+{% if search_teachers_form and show_options['teachers'] %}
+<form action="" method="post" novalidate>
+    {{ search_teachers_form.hidden_tag() }}
+    {{ search_teachers_form.activity }}
+    {{ search_teachers_form.submit_search_teachers }}
+</form>
+{% endif %}
+    {% if search_rooms_form and show_options['rooms'] %}
+<form action="" method="post" novalidate>
+    {{ search_rooms_form.hidden_tag() }}
+    {{ search_rooms_form.activity }}
+    {{ search_rooms_form.submit_search_rooms }}
+</form>
+{% endif %}
+        {% if search_activities_form and show_options['activities'] %}
+<form action="" method="post" novalidate>
+    {{ search_activities_form.hidden_tag() }}
+    {{ search_activities_form.teacher }}
+    {{ search_activities_form.room }}
+    {{ search_activities_form.submit_search_activities }}
+</form>
+{% endif %}
+{% if table %}
+<table>
+    {% for row in table %}
+        <tr>
+        {% for item in row %}
+            <td>{{ item }}</td>
+        {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endblock %}

@@ -89,7 +89,8 @@ class AddActivityForm(FlaskForm):
     time = SelectField('Date time', choices=[('Before school', 'Before school'), ('Lunch', 'Lunch'), ('After school', 'After school')],
                        validators=[DataRequired()])
     max_attendees = StringField('Max attendees', validators=[DataRequired()], render_kw={'placeholder': 'Max Attendees'})
-    food_supplied = StringField('Food supplied', validators=[DataRequired()], render_kw={'placeholder': 'Food supplied?'})
+    # food_supplied = StringField('Food supplied', validators=[DataRequired()], render_kw={'placeholder': 'Food supplied?'})
+    food_supplied = RadioField('Food supplied?', choices=[('Yes', 'Yes'), ('No', 'No')])
     teacher_list = FieldList(StringField(), min_entries=0)
     submit_add = SubmitField('Submit')
 
@@ -112,20 +113,20 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Please use a different email address.')
 
 
-class SortTeachersForm(FlaskForm):
+class SearchTeachersForm(FlaskForm):
     activity = StringField('Activity')
-    submit_sort_teachers = SubmitField('Submit')
+    submit_search_teachers = SubmitField('Submit')
 
 
-class SortRoomsForm(FlaskForm):
+class SearchRoomsForm(FlaskForm):
     activity = StringField('Activity')
-    submit_sort_rooms = SubmitField('Submit')
+    submit_search_rooms = SubmitField('Submit')
 
 
-class SortActivitiesForm(FlaskForm):
-    teacher = StringField('Teacher')
-    room = StringField('Room')
-    submit_sort_activities = SubmitField('Submit')
+class SearchActivitiesForm(FlaskForm):
+    teacher = StringField('Teacher', render_kw={'placeholder': 'Find activities with this teacher involved'})
+    room = StringField('Room', render_kw={'placeholder': 'Find activities in this room'})
+    submit_search_activities = SubmitField('Submit')
 
 
 class FindTimesForm(FlaskForm):

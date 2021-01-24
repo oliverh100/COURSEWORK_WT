@@ -9,11 +9,12 @@
     </head>
     <body>
         <div>
+            <img src="../static/highgate_logo.png" style="width: 313px; height: 61px"><br><br><br>
             <a href="{{ url_for('index') }}">Home</a>
             <a href="{{ url_for('teachers') }}">Teachers</a>
             <a href="{{ url_for('rooms') }}">Rooms</a>
             <a href="{{ url_for('activities') }}">Activities</a>
-            <a href="{{ url_for('sort') }}">Sort</a>
+            <a href="{{ url_for('search') }}">Search</a>
             {% if current_user.is_anonymous %}
             <a href="{{ url_for('login') }}">Login</a>
             {% else %}
