@@ -6,10 +6,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel= "stylesheet" type = "text/css" href = "{{ url_for('static', filename='stylesheets/CSS.css') }}">
+    <link rel="icon" href="../static/favico.ico">
     </head>
     <body>
         <div>
-            <img src="../static/highgate_logo.png" style="width: 313px; height: 61px"><br><br><br>
+            <img src="../static/highgate_logo.png" style="width: 313px; height: 61px"><br><br>
             <a href="{{ url_for('index') }}">Home</a>
             <a href="{{ url_for('teachers') }}">Teachers</a>
             <a href="{{ url_for('rooms') }}">Rooms</a>
