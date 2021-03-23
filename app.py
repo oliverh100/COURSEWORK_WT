@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_caching import Cache
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
-from fuzzywuzzy import fuzz
+
 from werkzeug.urls import url_parse
 
 app = Flask(__name__)
@@ -22,6 +22,7 @@ login.login_view = 'login'
 
 from models import Teacher, Activity, Room, TeacherActivityLink
 from forms import *
+from find_id import *
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -246,6 +247,11 @@ def activities():
 
         r_id = find_id_room(add_activity_form.r_name.data)
 
+        if Activity.query.filter(Activity.r_id == r_id and Activity.week == add_activity_form.week.data and Activity.day == add_activity_form.day.data and
+                                Activity.time == add_activity_form.time.data).all():
+            flash('Room not available at this time')
+            return redirect('activities')
+
         new_activity = Activity(a_name=add_activity_form.a_name.data, r_id=r_id, week=add_activity_form.week.data, day=add_activity_form.day.data,
                                 time=add_activity_form.time.data, max_attendees=add_activity_form.max_attendees.data,
                                 food_supplied=add_activity_form.food_supplied.data)
@@ -294,12 +300,12 @@ def activities():
                                available_rooms=available_rooms, find_times_form=find_times_form, available_rooms_datetime=datetime)
 
     if delete_activity_form.submit_delete_id.data and delete_activity_form.validate_on_submit():
-        activity_to_delete = Activity.query.filter(Activity.a_name == delete_activity_form.a_name.data.title()).first()
+        activity_to_delete = Activity.query.filter(Activity.a_name == delete_activity_form.a_name.data).first()
         if not activity_to_delete:
             flash('Couldn\'t find activity')
         else:
             TeacherActivityLink.query.filter(TeacherActivityLink.a_id == activity_to_delete.id).delete()
-            Activity.query.filter(Activity.a_name == delete_activity_form.a_name.data.title()).delete()
+            Activity.query.filter(Activity.a_name == delete_activity_form.a_name.data).delete()
             db.session.commit()
         return redirect('activities')
 
@@ -407,28 +413,7 @@ def search():
                            search_activities_form=search_activities_form, table=table)
 
 
-def find_id_teacher(name):
-    best_ratio, t_id = 0, None
-    for teacher in Teacher.query.all():
-        if fuzz.ratio(name, teacher.s_name) > best_ratio:
-            best_ratio, t_id = fuzz.ratio(name, teacher.s_name), teacher.id
-    return t_id
 
-
-def find_id_room(r_name):
-    best_ratio, t_id = 0, None
-    for room in Room.query.all():
-        if fuzz.ratio(r_name, room.r_name) > best_ratio:
-            best_ratio, t_id = fuzz.ratio(r_name, room.r_name), room.id
-    return t_id
-
-
-def find_id_activity(a_name):
-    best_ratio, a_id = 0, None
-    for activity in Activity.query.all():
-        if fuzz.ratio(a_name, activity.a_name) > best_ratio:
-            best_ratio, a_id = fuzz.ratio(a_name, activity.a_name), activity.id
-    return a_id
 
 
 def intersection(*arrays):

@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField, FieldList, SelectField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
-from models import User
+from models import *
+from find_id import *
 
 
 class LoginForm(FlaskForm):
@@ -95,9 +96,9 @@ class AddActivityForm(FlaskForm):
     submit_add = SubmitField('Submit')
 
 
+
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
@@ -106,11 +107,6 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(username=username.data).first()
         if user is not None:
             raise ValidationError('Please use a different username.')
-
-    def validate_email(self, email):
-        user = User.query.filter_by(email=email.data).first()
-        if user is not None:
-            raise ValidationError('Please use a different email address.')
 
 
 class SearchTeachersForm(FlaskForm):
