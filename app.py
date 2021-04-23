@@ -179,7 +179,6 @@ def rooms():
 @app.route('/activities', methods=['GET', 'POST'])
 @login_required
 def activities():
-
     add_activity_form = AddActivityForm()
     find_times_form = FindTimesForm()
     find_rooms_form = FindRoomsForm()
@@ -248,7 +247,7 @@ def activities():
         r_id = find_id_room(add_activity_form.r_name.data)
 
         if Activity.query.filter(Activity.r_id == r_id and Activity.week == add_activity_form.week.data and Activity.day == add_activity_form.day.data and
-                                Activity.time == add_activity_form.time.data).all():
+                                 Activity.time == add_activity_form.time.data).all():
             flash('Room not available at this time')
             return redirect('activities')
 
@@ -343,7 +342,7 @@ def register():
         return redirect(url_for('index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data, email=form.email.data)
+        user = User(username=form.username.data)
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
@@ -355,7 +354,6 @@ def register():
 @app.route('/sort', methods=['GET', 'POST'])
 @login_required
 def search():
-
     search_teachers_form = SearchTeachersForm()
     search_rooms_form = SearchRoomsForm()
     search_activities_form = SearchActivitiesForm()
@@ -413,10 +411,17 @@ def search():
                            search_activities_form=search_activities_form, table=table)
 
 
-
+# def intersection(*arrays):
+#     for arr in arrays:
+#         if type(arr) != list:
+#             raise TypeError
+#     return list(set.intersection(*[set(arr) for arr in arrays]))
 
 
 def intersection(*arrays):
+    for arr in arrays:
+        if type(arr) != list:
+            raise TypeError
     arrays = [arr for arr in arrays if arr != []]
     return list(set.intersection(*[set(arr) for arr in arrays]))
 
